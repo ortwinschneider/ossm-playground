@@ -1,0 +1,22 @@
+apiVersion: sailoperator.io/v1
+kind: Istio
+metadata:
+  name: default
+  namespace: istio-system
+spec:
+  namespace: istio-system
+  version: v1.26.4
+  values:
+    pilot:
+      trustedZtunnelNamespace: ztunnel
+    profile: ambient
+    meshConfig:
+      enableTracing: true
+      extensionProviders:
+      - name: otel
+        opentelemetry:
+          port: 4317
+          service: otel-collector.istio-system.svc.cluster.local
+      discoverySelectors:
+      - matchLabels:
+          istio-discovery: enabled

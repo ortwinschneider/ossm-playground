@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-discovery: enabled
+    istio.io/dataplane-mode: ambient
+  name: travel-agency
+spec: {}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-discovery: enabled
+    istio.io/dataplane-mode: ambient
+  name: travel-portal
+spec: {}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-discovery: enabled
+    istio.io/dataplane-mode: ambient
+  name: travel-control
+spec: {}

@@ -1,0 +1,24 @@
+apiVersion: sailoperator.io/v1
+kind: Istio
+metadata:
+  name: default
+spec:
+  namespace: istio-system
+  version: v1.26.4
+  values:
+    pilot:
+      trustedZtunnelNamespace: ztunnel
+    profile: ambient
+    meshConfig:
+      discoverySelectors:
+      - matchLabels:
+          istio-discovery: enabled
+---
+apiVersion: sailoperator.io/v1
+kind: IstioCNI
+metadata:
+  name: default
+spec:
+  version: v1.26.4
+  namespace: istio-cni
+  profile: ambient

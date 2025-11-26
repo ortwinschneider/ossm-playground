@@ -1,0 +1,24 @@
+apiVersion: tempo.grafana.com/v1alpha1
+kind: TempoStack 
+metadata:
+  name: simplest
+  namespace: tempostack 
+spec: 
+  storage: 
+    secret: 
+      name: minio-traces-secret 
+      type: s3 
+  storageSize: 1Gi 
+  resources: 
+    total:
+      limits:
+        memory: 2Gi
+        cpu: 2000m
+  template:
+    queryFrontend:
+      jaegerQuery:
+        enabled: true 
+        ingress:
+          route:
+            termination: edge
+          type: route

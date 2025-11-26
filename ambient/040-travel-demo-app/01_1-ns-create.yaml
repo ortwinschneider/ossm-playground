@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-discovery: enabled
+  name: travel-agency
+spec: {}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-discovery: enabled
+  name: travel-portal
+spec: {}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-discovery: enabled
+  name: travel-control
+spec: {}

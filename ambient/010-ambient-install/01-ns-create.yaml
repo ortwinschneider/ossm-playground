@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-discovery: enabled
+  name: istio-system
+spec: {}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-discovery: enabled
+  name: istio-cni
+spec: {}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    istio-discovery: enabled
+  name: ztunnel
+spec: {}
