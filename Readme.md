@@ -48,7 +48,7 @@ If you want to see traces, you **need to enable the Waypoint Proxies (L7) for th
 
 Navigate to the directory: `030-tracing-install` and follow the instructions.
 
-## 4. Install the Kiali Travel demo application
+## 4. Install the Kiali Travel demo application in ambient mesh
 
 This demo application is based on the [Kiali Travel Demo Tutorial](https://kiali.io/docs/tutorials/travels/) and will deploy several services grouped into three namespaces. 
 
@@ -64,7 +64,19 @@ A main travels service will be the business entry point for the travel agency.
 
 Navigate to the directory: `040-travel-demo-app` and follow the instructions.
 
-## 5. Traffic Management
+## 5. Combining ambient and sidecar mode
+
+Istio’s ambient mode is ideal for new mesh deployments. But it can be combined with sidecars within the same mesh.
+The sidecar proxy knows to use the HBONE protocol since the destination has been discovered to be an HBONE destination.
+
+But the combination comes with some caveats:
+
+- Existing sidecar meshes will require an update (restart)
+- Traffic between sidecars and ambient workloads will bypass waypoints, meaning only L4 features are applied.
+
+Navigate to the directory: `050-ambient-and-sidecar` and follow the instructions.
+
+## 6. Traffic Management
 
 Ambient Mode provides the full suite of Istio traffic management capabilities through a two-tiered architecture that prioritizes efficiency and incremental adoption.
 The key to traffic management in Ambient Mode is understanding when traffic is handled at Layer 4 (L4) versus when it is escalated to Layer 7 (L7).
@@ -72,20 +84,20 @@ The key to traffic management in Ambient Mode is understanding when traffic is h
 - **Ztunnel**: Handles L4 (TCP) traffic management, primarily security. It provides connection-level load balancing, mTLS encryption (using HBONE), and L4 authorization. It does not read HTTP headers.
 - **Waypoint Proxy**: Handles L7 (HTTP/gRPC) traffic management. This is where the advanced, application-aware features are enabled.
 
-Navigate to the directory: `050-traffic-management` and follow the instructions.
+Navigate to the directory: `060-traffic-management` and follow the instructions.
 
-## 6. Resilience
-
-Upcoming module
-
-## 7. Authentication and Authorization
+## 7. Resilience
 
 Upcoming module
 
-## 8. Troubleshooting
+## 8. Authentication and Authorization
 
 Upcoming module
 
-## 9. Multicluster Ambient Mesh
+## 9. Troubleshooting
+
+Upcoming module
+
+## 10. Multicluster Ambient Mesh
 
 Upcoming module
