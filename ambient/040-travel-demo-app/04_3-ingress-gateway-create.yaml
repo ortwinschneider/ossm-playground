@@ -1,0 +1,55 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: travel-gateway-istio
+  namespace: travel-control
+  labels:
+    gateway.networking.k8s.io/gateway-name: travel-gateway
+    #istio.io/dataplane-mode: none
+spec:
+  ports:
+    - name: status-port
+      protocol: TCP
+      appProtocol: tcp
+      port: 15021
+      targetPort: 15021
+    - name: http
+      protocol: TCP
+      appProtocol: http
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+  selector:
+    gateway.networking.k8s.io/gateway-name: travel-gateway
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: travel-gateway
+  namespace: travel-control
+spec:
+  gatewayClassName: istio
+  listeners:
+  - name: default
+    port: 80
+    protocol: HTTP
+    allowedRoutes:
+      namespaces:
+        from: All
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: travel-route
+  namespace: travel-control
+spec:
+  parentRefs:
+  - name: travel-gateway
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: control
+      port: 8080

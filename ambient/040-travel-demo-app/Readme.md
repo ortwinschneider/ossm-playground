@@ -152,13 +152,44 @@ After the label is applied, all L4 traffic to and from the ambient mesh is inter
 
 Congratulations! You have successfully added the Travel Demo to ambient mesh.
 
-### 4.5 Create an Ingress Gateway
+### 4.5 Create a Waypoint Proxy
+
+ Istio is sending traffic from a gateway to the destination directly, even if that specific destination is enrolled in a waypoint.
+
+We can enable ingress waypoint routing on a service, such that traffic will be sent from the gateway to the configured waypoint, not to the destination service. 
+
+So, first create a Waypoint a Proxy and configure an example HTTPRoute.
+
+```sh
+$ oc apply -f 04_1-control-waypoint-create.yaml
+```
+
+### 4.6 Label the travel-control namespace to use the waypoint
+
+Now label the namespace to enroll the services in the waypoint.
+
+```sh
+$ oc apply -f 04_2-label-ns-for-waypoint.yaml
+```
+
+### 4.7 Create an Ingress Gateway
 
 The following configuration is defining a basic `Ingress Gateway` and an `HTTPRoute` using the Kubernetes Gateway API, which Istio fully supports and implements. It's essentially setting up a public entry point for HTTP traffic and routing all incoming requests to the control service.
 
 ```sh
-$ oc apply -f 04-ingress-gateway-create.yaml
+$ oc apply -f 04_3-ingress-gateway-create.yaml
 ```
+
+### 4.8 Label the control service
+
+In order to enable ingress waypoint routing, label the control service.
+The traffic entering the Ingress Gateway will now be forwarded to the Waypoint proxy for L7 policy enforcement.
+
+```sh
+$ oc apply -f 04_4-label-ingress-use-waypoint.yaml
+```
+
+### 4.9 Expose the Ingress Gateway
 
 Expose the Ingress Gateway with an OpenShift Route:
 
@@ -172,7 +203,7 @@ You can now access the Travel Control Dashboard through the Service Mesh Ingress
 echo "https://$(oc get routes -n travel-control travel-gateway -o jsonpath='{.spec.host}')"
 ```
 
-### 4.6 Observe the Travel Demo application
+### 4.10 Observe the Travel Demo application
 
 Go to Kiali or use the Service Mesh Console plugin to observe the traffic of the Travel Demo application. Navigate to **Service Mesh -> Traffic Graph**, select the 3 travel demo namespaces and have a look at the `Versioned app graph`
 
@@ -186,7 +217,7 @@ In the OpenShift Console, go to Observe -> Metrics and run the query: `istio_tcp
 
 ![OCP Deployments](../../ambient/images/ocp-ossm-metrics.png)
 
-### 4.7 Apply an Authorization policy
+### 4.11 Apply an Authorization policy
 
 The following policy is an Istio `AuthorizationPolicy` that specifically defines which traffic is allowed to reach the workloads labeled `app: control` in the travel-control namespace.
 
@@ -206,3 +237,9 @@ oc exec $(oc get pod -l app=cars -n travel-agency -o jsonpath='{.items[0].metada
 curl: (56) Recv failure: Connection reset by peer
 command terminated with exit code 56
   ```
+
+### 4.12 Enable Tracing for the Ingress Gateway and Waypoint Proxy
+
+```sh
+$ oc apply -f 07-enable-tracing.yaml
+```  

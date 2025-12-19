@@ -13,4 +13,5 @@ spec:
     - source:
         principals:
         - cluster.local/ns/travel-control/sa/travel-gateway-istio
+        - cluster.local/ns/travel-control/sa/travel-control-waypoint
  
