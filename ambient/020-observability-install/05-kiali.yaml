@@ -5,6 +5,14 @@ metadata:
   namespace: istio-system
 spec:
   deployment:
+    cluster_wide_access: false
+    discovery_selectors:
+      default:
+      - matchExpressions:
+        - key: istio-discovery
+          operator: In
+          values:
+          - enabled
     logger:
       log_level: info
   external_services:
