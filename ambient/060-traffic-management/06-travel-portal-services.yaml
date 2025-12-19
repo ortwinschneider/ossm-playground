@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: voyages-v1
+  namespace: travel-portal
+spec:
+  ports:
+    - name: http
+      port: 8000
+  selector:
+    app: voyages
+    version: v1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: voyages-v2
+  namespace: travel-portal
+spec:
+  ports:
+    - name: http
+      port: 8000
+  selector:
+    app: voyages
+    version: v2

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voyages-v2
+  namespace: travel-portal
+spec:
+  selector:
+    matchLabels:
+      app: voyages
+      version: v2
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: voyages
+        version: v2
+    spec:
+      containers:
+        - name: voyages
+          image: quay.io/kiali/demo_travels_portal:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+          env:
+            - name: LISTEN_ADDRESS
+              value: ":8000"
+            - name: PORTAL_COORDINATES
+              value: "48.861310,2.337418"
+            - name: PORTAL_COUNTRY
+              value: "France"
+            - name: PORTAL_NAME
+              value: "voyages.fr"
+            - name: TRAVELS_AGENCY_SERVICE
+              value: "http://travels.travel-agency:8000"

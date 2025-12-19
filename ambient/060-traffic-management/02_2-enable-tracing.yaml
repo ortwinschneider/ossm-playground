@@ -1,0 +1,29 @@
+apiVersion: telemetry.istio.io/v1
+kind: Telemetry
+metadata:
+  name: telemetry-waypoint-travel-agency
+  namespace: travel-agency
+spec:
+  targetRefs:
+  - kind: Gateway
+    name: waypoint-travel-agency
+    group: gateway.networking.k8s.io
+  tracing:
+  - providers:
+    - name: "otel"
+    randomSamplingPercentage: 50
+---
+apiVersion: telemetry.istio.io/v1
+kind: Telemetry
+metadata:
+  name: telemetry-waypoint-travel-portal
+  namespace: travel-portal
+spec:
+  targetRefs:
+  - kind: Gateway
+    name: waypoint-travel-portal
+    group: gateway.networking.k8s.io
+  tracing:
+  - providers:
+    - name: "otel"
+    randomSamplingPercentage: 50
