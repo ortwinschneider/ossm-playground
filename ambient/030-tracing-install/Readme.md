@@ -2,10 +2,18 @@
 
 You can integrate Red Hat OpenShift Service Mesh with Red Hat OpenShift distributed tracing data collection to instrument, generate, collect, and export OpenTelemetry traces, metrics, and logs to analyze and understand your software’s performance and behavior.
 
+Please note:
+- Distributed **traces are emitted from waypoint proxies only** (requires Layer 7 features)
+- Kiali access traces from the waypoint proxy where the workload is enrolled
+- Traces are **filtered by the trace operation** name rather than the workload name
+
 Integrating Red Hat OpenShift distributed tracing platform with Red Hat OpenShift Service Mesh is made of up two parts: 
+
 Installing 
+
 - Red Hat OpenShift distributed tracing platform (Tempo) and 
 - Red Hat OpenShift distributed tracing data collection.
+
 
 ### 3.0 Prerequisites
 
@@ -112,20 +120,10 @@ ossmconsole-74bdffdfd7-xv56c      1/1     Running   0          64m
 otel-collector-59798f79d4-gcjxf   1/1     Running   0          82s
 ```
 
-### 3.6 Enable Tracing in Service Mesh
+### 3.6 Configure Tracing in Service Mesh
 
 Configure Red Hat OpenShift Service Mesh to enable tracing, and define the distributed tracing data collection tracing providers in your meshConfig:
 
 ```sh
 $ oc apply -f 05-istio-update.yaml
 ```
-
-### 3.6 Create an Istio Telemetry resource
-
-Create an Istio Telemetry resource to enable tracers defined in `spec.values.meshConfig.ExtensionProviders`
-
-```sh
-$ oc apply -f 06-istio-telemetry.yaml
-```
-
-We start with a sampling rate of 100%. 

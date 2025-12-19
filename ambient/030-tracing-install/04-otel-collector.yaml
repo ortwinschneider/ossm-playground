@@ -10,7 +10,7 @@ spec:
   config:
     exporters:
       otlp:
-        endpoint: 'tempo-simplest-distributor.tempostack.svc.cluster.local'
+        endpoint: 'tempo-simplest-distributor.tempostack.svc.cluster.local:4317'
         tls:
           insecure: true
     receivers:
@@ -18,7 +18,6 @@ spec:
         protocols:
           grpc:
             endpoint: '0.0.0.0:4317'
-          http: {}
     service:
       pipelines:
         traces:
