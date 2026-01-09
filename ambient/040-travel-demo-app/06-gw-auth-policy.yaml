@@ -1,12 +1,13 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: travel-control-gateway
+  name: travel-control-gateway-allow
   namespace: travel-control
 spec:
-  selector:
-    matchLabels:
-      app: control
+  targetRefs:
+  - kind: Service
+    group: ""
+    name: control
   action: ALLOW
   rules:
   - from:
@@ -14,4 +15,3 @@ spec:
         principals:
         - cluster.local/ns/travel-control/sa/travel-gateway-istio
         - cluster.local/ns/travel-control/sa/travel-control-waypoint
- 

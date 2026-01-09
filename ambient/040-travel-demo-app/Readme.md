@@ -152,7 +152,43 @@ After the label is applied, all L4 traffic to and from the ambient mesh is inter
 
 Congratulations! You have successfully added the Travel Demo to ambient mesh.
 
-### 4.5 Create a Waypoint Proxy
+### 4.5 Create a Level 4 Authorization Policy
+
+The following policy is an Istio `AuthorizationPolicy` that specifically defines which traffic is allowed to reach the workloads labeled `app: travels` in the travel-agency namespace.
+
+It basically creates a security rule that **ensures only traffic originating from the 3 portals in the travel-portal namespace can reach the travels** API application. 
+
+This is a Level 4 policy that is enforced by ztunnel.
+
+```sh
+$ oc apply -f 03_1-auth-policy.yaml
+```
+
+Check if the policy was attached to ztunnel:
+
+```sh
+oc get ap travel-api-allow-portals -n travel-agency -o yaml
+
+status:
+  conditions:
+  - lastTransitionTime: "2026-01-09T12:04:50.952399869Z"
+    message: attached to ztunnel
+    observedGeneration: "1"
+    reason: Accepted
+    status: "True"
+    type: ZtunnelAccepted
+```
+
+You can also verify that it is not possible to access the `travels` service from another pod with the command:
+
+```sh
+oc exec $(oc get pod -l app=cars -n travel-agency -o jsonpath='{.items[0].metadata.name}') -n travel-agency -- curl -sS travels.travel-agency.svc.cluster.local:8000
+
+curl: (56) Recv failure: Connection reset by peer
+command terminated with exit code 56
+```
+
+### 4.6 Create a Waypoint Proxy
 
  Istio is sending traffic from a gateway to the destination directly, even if that specific destination is enrolled in a waypoint.
 
@@ -164,7 +200,7 @@ So, first create a Waypoint a Proxy and configure an example HTTPRoute.
 $ oc apply -f 04_1-control-waypoint-create.yaml
 ```
 
-### 4.6 Label the travel-control namespace to use the waypoint
+### 4.7 Label the travel-control namespace to use the waypoint
 
 Now label the namespace to enroll the services in the waypoint.
 
@@ -172,7 +208,7 @@ Now label the namespace to enroll the services in the waypoint.
 $ oc apply -f 04_2-label-ns-for-waypoint.yaml
 ```
 
-### 4.7 Create an Ingress Gateway
+### 4.8 Create an Ingress Gateway
 
 The following configuration is defining a basic `Ingress Gateway` and an `HTTPRoute` using the Kubernetes Gateway API, which Istio fully supports and implements. It's essentially setting up a public entry point for HTTP traffic and routing all incoming requests to the control service.
 
@@ -180,7 +216,7 @@ The following configuration is defining a basic `Ingress Gateway` and an `HTTPRo
 $ oc apply -f 04_3-ingress-gateway-create.yaml
 ```
 
-### 4.8 Label the control service
+### 4.9 Label the control service
 
 In order to enable ingress waypoint routing, label the control service.
 The traffic entering the Ingress Gateway will now be forwarded to the Waypoint proxy for L7 policy enforcement.
@@ -189,7 +225,7 @@ The traffic entering the Ingress Gateway will now be forwarded to the Waypoint p
 $ oc apply -f 04_4-label-ingress-use-waypoint.yaml
 ```
 
-### 4.9 Expose the Ingress Gateway
+### 4.10 Expose the Ingress Gateway
 
 Expose the Ingress Gateway with an OpenShift Route:
 
@@ -203,7 +239,7 @@ You can now access the Travel Control Dashboard through the Service Mesh Ingress
 echo "https://$(oc get routes -n travel-control travel-gateway -o jsonpath='{.spec.host}')"
 ```
 
-### 4.10 Observe the Travel Demo application
+### 4.11 Observe the Travel Demo application
 
 Go to Kiali or use the Service Mesh Console plugin to observe the traffic of the Travel Demo application. Navigate to **Service Mesh -> Traffic Graph**, select the 3 travel demo namespaces and have a look at the `Versioned app graph`
 
@@ -217,16 +253,31 @@ In the OpenShift Console, go to Observe -> Metrics and run the query: `istio_tcp
 
 ![OCP Deployments](../../ambient/images/ocp-ossm-metrics.png)
 
-### 4.11 Apply an Authorization policy
+### 4.12 Create a Level 7 Authorization policy
 
-The following policy is an Istio `AuthorizationPolicy` that specifically defines which traffic is allowed to reach the workloads labeled `app: control` in the travel-control namespace.
+The following policy is an Istio `AuthorizationPolicy` that defines which traffic is allowed to reach the workloads labeled `app: control` in the travel-control namespace.
 
-It basically creates a security rule that **ensures only traffic originating from the Istio Gateway deployment can reach the control** application. 
+It basically creates a security rule that **ensures only traffic originating from the Istio Gateway deployment with the protocol HTTP can reach the control** application. 
 
-This is a Level 4 policy that is enforced by ztunnel.
+This is a Level 7 policy that is enforced by the waypoint proxy.
 
 ```sh
 $ oc apply -f 06-gw-auth-policy.yaml
+```
+
+Check if the policy was attached to the waypoint proxy:
+
+```sh
+oc get ap travel-control-gateway-allow -n travel-control -o yaml
+
+status:
+  conditions:
+  - lastTransitionTime: "2026-01-09T12:39:43.199788478Z"
+    message: bound to travel-control/travel-control-waypoint
+    observedGeneration: "1"
+    reason: Accepted
+    status: "True"
+    type: WaypointAccepted
 ```
 
 Verify that it is not possible to access the `control` service from another pod with the command:
@@ -238,7 +289,7 @@ curl: (56) Recv failure: Connection reset by peer
 command terminated with exit code 56
   ```
 
-### 4.12 Enable Tracing for the Ingress Gateway and Waypoint Proxy
+### 4.13 Enable Tracing for the Ingress Gateway and Waypoint Proxy
 
 ```sh
 $ oc apply -f 07-enable-tracing.yaml
