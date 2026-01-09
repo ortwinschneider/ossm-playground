@@ -4,7 +4,7 @@ metadata:
   name: default
 spec:
   namespace: istio-system
-  version: v1.26.4
+  version: v1.27-latest
   values:
     pilot:
       trustedZtunnelNamespace: ztunnel
@@ -19,6 +19,6 @@ kind: IstioCNI
 metadata:
   name: default
 spec:
-  version: v1.26.4
+  version: v1.27-latest
   namespace: istio-cni
   profile: ambient
