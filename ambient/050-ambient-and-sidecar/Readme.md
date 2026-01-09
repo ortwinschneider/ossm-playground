@@ -81,3 +81,5 @@ echo "https://$(oc get routes -n travel-control-sidecar control-sidecar -o jsonp
 ```
 
 Open the Dashboard and verify it is working. 
+
+![Sidecar Control](../../ambient/images/travel-control-sidecar.png)
