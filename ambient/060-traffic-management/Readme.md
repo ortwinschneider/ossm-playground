@@ -29,7 +29,7 @@ oc apply -f 01-waypoints-create.yaml
 oc apply -f 02_1-ns-use-waypoints.yaml
 ```
 
-After enrolling the namespace, requests from any pods using the ambient data plane to services in bookinfo will route through the waypoint for L7 processing and policy enforcement.
+After enrolling the namespace, requests from any pods using the ambient data plane to services in travel-portal and travel-agency will route through the waypoint for L7 processing and policy enforcement.
 
 Confirm that the waypoint proxy is used by all the services in the travel-portal and travel-agency namespaces:
 
