@@ -1,11 +1,13 @@
 apiVersion: kiali.io/v1alpha1
 kind: Kiali
+annotations:
+  ansible.sdk.operatorframework.io/reconcile-period: 60s
 metadata:
   name: kiali-user-workload-monitoring
   namespace: istio-system
 spec:
   deployment:
-    cluster_wide_access: false
+    cluster_wide_access: true
     discovery_selectors:
       default:
       - matchExpressions:
