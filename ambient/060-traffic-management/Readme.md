@@ -1,4 +1,4 @@
-## 5. Traffic Management
+## 6. Traffic Management
 
 To gain advanced traffic control, you **must deploy a Waypoint Proxy** for the workload's namespace. The traffic is then routed from the Ztunnel, through the Waypoint Proxy, and finally to the destination workload.
 
@@ -17,13 +17,13 @@ The following section describes some advanced traffic control capabilities:
 - **Timeouts/Retries**: Uses `Waypoint` Proxy
   - Configuring application-level request timeouts and retries on failure.
 
-### 5.1 Create Waypoint Proxies
+### 6.1 Create Waypoint Proxies
 
 ```sh
 oc apply -f 01-waypoints-create.yaml
 ```
 
-### 5.2 Enroll the travel application namespaces to use waypoints
+### 6.2 Enroll the travel application namespaces to use waypoints
 
 ```sh
 oc apply -f 02_1-ns-use-waypoints.yaml
@@ -37,37 +37,37 @@ Confirm that the waypoint proxy is used by all the services in the travel-portal
 istioctl ztunnel-config svc --namespace ztunnel
 ```
 
-### 5.3 Enable tracing for the waypoint proxies
+### 6.3 Enable tracing for the waypoint proxies
 
 ```sh
 oc apply -f 02_2-enable-tracing.yaml
 ```
 
-### 5.4 High Availability of Waypoint Proxies
+### 6.4 High Availability of Waypoint Proxies
 
 ```sh
 oc apply -f 03-waypoint-hpa.yaml
 ```
 
-### 5.5 Pod Disruption Bucket for Waypoint Proxies
+### 6.5 Pod Disruption Bucket for Waypoint Proxies
 
 ```sh
 oc apply -f 04-waypoint-pdb.yaml
 ```
 
-### 5.6 Create a version 2 of the voyages portal
+### 6.6 Create a version 2 of the voyages portal
 
 ```sh
 oc apply -f 05-travel-portal-app-v2.yaml
 ```
 
-### 5.7 Create the services versions
+### 6.7 Create the services versions
 
 ```sh
 oc apply -f 06-travel-portal-services.yaml
 ```
 
-### 5.8 Split the traffic
+### 6.8 Split the traffic
 
 ```sh
 oc apply -f 07-traffic-portal-split.yaml
