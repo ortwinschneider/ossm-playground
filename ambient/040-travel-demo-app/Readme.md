@@ -9,7 +9,7 @@ Change into the directory `040-travel-demo-app`.
 Create the namespaces for the Kiali Travel Demo with the following command:
 
 ```sh
-$ oc apply -f 01_1-ns-create.yaml
+oc apply -f 01_1-ns-create.yaml
 ```
 
 The namespaces are labeled with the configured istio discovery selector.
@@ -19,7 +19,7 @@ The namespaces are labeled with the configured istio discovery selector.
 PodMonitor objects must be applied in all mesh namespaces:
 
 ```sh
-$ oc apply -f 01_2-pod-monitors-create.yaml
+oc apply -f 01_2-pod-monitors-create.yaml
 ```
 
 ### 4.3 Deploy the application components
@@ -27,7 +27,7 @@ $ oc apply -f 01_2-pod-monitors-create.yaml
 **Step 1**: Deploy the `travel-agency` components with: 
 
 ```sh
-$ oc apply -n travel-agency -f 02_1-travel-agency-app.yaml
+oc apply -n travel-agency -f 02_1-travel-agency-app.yaml
 
 secret/mysql-credentials created
 service/mysqldb created
@@ -49,7 +49,7 @@ service/travels created
 **Step 2**: Deploy the `travel-portal` components with: 
 
 ```sh
-$ oc apply -n travel-portal -f 02_2-travel-portal-app.yaml
+oc apply -n travel-portal -f 02_2-travel-portal-app.yaml
 
 deployment.apps/voyages created
 service/voyages created
@@ -62,7 +62,7 @@ service/travels created
 **Step 3**: Deploy the `travel-control` components with: 
 
 ```sh
-$ oc apply -n travel-control -f 02_3-travel-control-app.yaml
+oc apply -n travel-control -f 02_3-travel-control-app.yaml
 
 deployment.apps/control created
 service/control created
@@ -71,7 +71,7 @@ service/control created
 **Step 4**: Create a Route for the `Travel Control Dashboard` with: 
 
 ```sh
-$ oc apply -f 02_4-travel-control-route.yaml
+oc apply -f 02_4-travel-control-route.yaml
 ```
 
 Get the Travel Control Dashboard URL from the Route by running the following command:
@@ -93,7 +93,7 @@ Right now, we have deployed the application components in namespaces, that are "
 We can verify this by the following command:
 
 ```sh
-$ istioctl ztunnel-config workload -n ztunnel
+istioctl ztunnel-config workload -n ztunnel
 
 NAMESPACE      POD NAME                        ADDRESS      NODE     WAYPOINT PROTOCOL
 travel-agency  cars-v1-75f98c6f58-6g8nv        10.130.1.114 master-0 None     TCP
@@ -123,13 +123,13 @@ WAYPOINT:
 Now let's add the application to the Ambient Mesh by labeling the namespaces with `istio.io/dataplane-mode=ambient`:
 
 ```sh
-$ oc apply -f 03-ns-add-to-mesh.yaml
+oc apply -f 03-ns-add-to-mesh.yaml
 ```
 
 Verify that the application is now part of the Mesh:
 
 ```sh
-$ istioctl ztunnel-config workload -n ztunnel
+istioctl ztunnel-config workload -n ztunnel
 
 NAMESPACE      POD NAME                        ADDRESS      NODE     WAYPOINT PROTOCOL
 travel-agency  cars-v1-75f98c6f58-6g8nv        10.130.1.114 master-0 None     HBONE
@@ -161,7 +161,7 @@ It basically creates a security rule that **ensures only traffic originating fro
 This is a Level 4 policy that is enforced by ztunnel.
 
 ```sh
-$ oc apply -f 03_1-auth-policy.yaml
+oc apply -f 03_1-auth-policy.yaml
 ```
 
 Check if the policy was attached to ztunnel:
@@ -197,7 +197,7 @@ We can enable ingress waypoint routing on a service, such that traffic will be s
 So, first create a Waypoint a Proxy and configure an example HTTPRoute.
 
 ```sh
-$ oc apply -f 04_1-control-waypoint-create.yaml
+oc apply -f 04_1-control-waypoint-create.yaml
 ```
 
 ### 4.7 Label the travel-control namespace to use the waypoint
@@ -205,7 +205,7 @@ $ oc apply -f 04_1-control-waypoint-create.yaml
 Now label the namespace to enroll the services in the waypoint.
 
 ```sh
-$ oc apply -f 04_2-label-ns-for-waypoint.yaml
+oc apply -f 04_2-label-ns-for-waypoint.yaml
 ```
 
 ### 4.8 Create an Ingress Gateway
@@ -213,7 +213,7 @@ $ oc apply -f 04_2-label-ns-for-waypoint.yaml
 The following configuration is defining a basic `Ingress Gateway` and an `HTTPRoute` using the Kubernetes Gateway API, which Istio fully supports and implements. It's essentially setting up a public entry point for HTTP traffic and routing all incoming requests to the control service.
 
 ```sh
-$ oc apply -f 04_3-ingress-gateway-create.yaml
+oc apply -f 04_3-ingress-gateway-create.yaml
 ```
 
 ### 4.9 Label the control service
@@ -222,7 +222,7 @@ In order to enable ingress waypoint routing, label the control service.
 The traffic entering the Ingress Gateway will now be forwarded to the Waypoint proxy for L7 policy enforcement.
 
 ```sh
-$ oc apply -f 04_4-label-ingress-use-waypoint.yaml
+oc apply -f 04_4-label-ingress-use-waypoint.yaml
 ```
 
 ### 4.10 Expose the Ingress Gateway
@@ -230,7 +230,7 @@ $ oc apply -f 04_4-label-ingress-use-waypoint.yaml
 Expose the Ingress Gateway with an OpenShift Route:
 
 ```sh
-$ oc apply -f 05-ingress-gateway-route.yaml
+oc apply -f 05-ingress-gateway-route.yaml
 ```
 
 You can now access the Travel Control Dashboard through the Service Mesh Ingress Gateway:
@@ -262,7 +262,7 @@ It basically creates a security rule that **ensures only traffic originating fro
 This is a Level 7 policy that is enforced by the waypoint proxy.
 
 ```sh
-$ oc apply -f 06-gw-auth-policy.yaml
+oc apply -f 06-gw-auth-policy.yaml
 ```
 
 Check if the policy was attached to the waypoint proxy:
@@ -292,5 +292,5 @@ command terminated with exit code 56
 ### 4.13 Enable Tracing for the Ingress Gateway and Waypoint Proxy
 
 ```sh
-$ oc apply -f 07-enable-tracing.yaml
+oc apply -f 07-enable-tracing.yaml
 ```  

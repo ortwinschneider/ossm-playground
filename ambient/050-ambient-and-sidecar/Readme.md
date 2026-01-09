@@ -17,7 +17,7 @@ Change into the directory `050-ambient-and-sidecar`.
 Create the namespace `travel-control-sidecar` with the following command:
 
 ```sh
-$ oc apply -f 01-ns-create.yaml
+oc apply -f 01-ns-create.yaml
 ```
 
 The namespace is labeled with the configured istio discovery selector `istio-discovery=enabled` and the injection label `istio-injection=enabled`. 
@@ -28,7 +28,7 @@ Istio will inject sidecars for workloads in this namespace.
 PodMonitor objects must be applied in all mesh namespaces:
 
 ```sh
-$ oc apply -f 02-pod-monitors-create.yaml
+oc apply -f 02-pod-monitors-create.yaml
 ```
 
 ### 5.3 Deploy the travel-control application component
@@ -54,7 +54,7 @@ spec:
 **Step 1**: Let's apply the travel control deployment and service now:
 
 ```sh
-$ oc apply -f 03-travel-control-app.yaml
+oc apply -f 03-travel-control-app.yaml
 
 deployment.apps/control created
 service/control created
@@ -63,7 +63,7 @@ service/control created
 Check if we have two containers running in the pod:
 
 ```sh
-$ oc get pods -n travel-control-sidecar -o jsonpath="{.items[*].spec.containers[*].name}"
+oc get pods -n travel-control-sidecar -o jsonpath="{.items[*].spec.containers[*].name}"
 
 control istio-proxy
 ```
@@ -71,7 +71,7 @@ control istio-proxy
 **Step 2**: Create a Route for this new `Travel Control Dashboard` with: 
 
 ```sh
-$ oc apply -f 04-travel-control-route.yaml
+oc apply -f 04-travel-control-route.yaml
 ```
 
 Get the Travel Control Dashboard URL from the Route by running the following command:
@@ -80,6 +80,6 @@ Get the Travel Control Dashboard URL from the Route by running the following com
 echo "https://$(oc get routes -n travel-control-sidecar control-sidecar -o jsonpath='{.spec.host}')"
 ```
 
-Open the Dashboard and verify it is working. 
+Open the Dashboard and verify it is working.
 
 ![Sidecar Control](../../ambient/images/travel-control-sidecar.png)

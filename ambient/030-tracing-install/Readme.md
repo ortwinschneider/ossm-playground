@@ -31,7 +31,7 @@ We are going to install MinIO for this demo:
 Change into the directory `030-tracing-install`.
 
 ```sh
-$ oc apply -f ./00-minio/
+oc apply -f ./00-minio/
 
 namespace/minio created
 secret/minio-secret created
@@ -56,13 +56,13 @@ Open the URL and login with the **user**: `minio` and **password**: `minio123`
 ### 3.2 Create the namespace for the Tempo Stack deployment
 
 ```sh
-$ oc apply -f 01-namespace.yaml
+oc apply -f 01-namespace.yaml
 ```
 
 ### 3.3 Create a MinIO access for Tempo Stack
 
 ```sh
-$ oc apply -f 02-minio-secret.yaml
+oc apply -f 02-minio-secret.yaml
 ```
 
 ### 3.4 Deploy a Tempo Stack instance
@@ -70,19 +70,19 @@ $ oc apply -f 02-minio-secret.yaml
 This CR creates a simple TempoStack deployment, that exposes the Jaeger UI, which visualizes the data, via a route and uses our MinIO instance for storage of tracing data.
 
 ```sh
-$ oc apply -f 03-tempostack.yaml
+oc apply -f 03-tempostack.yaml
 ```
 
 Verify that the status of all TempoStack components is Running and the conditions are type: Ready by running the following command:
 
 ```sh
-$ oc get tempostacks.tempo.grafana.com simplest -n tempostack -o yaml
+oc get tempostacks.tempo.grafana.com simplest -n tempostack -o yaml
 ```
 
 Verify that all the TempoStack component pods are running by running the following command:
 
 ```sh
-$ oc get pods -n tempostack
+oc get pods -n tempostack
 
 NAME                                             READY   STATUS    RESTARTS   AGE
 tempo-simplest-compactor-6bb589bdf5-5dxv6        1/1     Running   0          4m19s
@@ -106,11 +106,11 @@ Next, install the `OpenTelemetryCollector` resource in the istio-system namespac
 This collector will receive traces from Istio and will export them through GRPC to Tempo.
 
 ```sh
-$ oc apply -f 04-otel-collector.yaml
+oc apply -f 04-otel-collector.yaml
 ```
 
 ```sh
-$ oc get pods -n istio-system
+oc get pods -n istio-system
 
 NAME                              READY   STATUS    RESTARTS   AGE
 grafana-6b6dfdf46c-zgr98          1/1     Running   0          19h
@@ -125,5 +125,5 @@ otel-collector-59798f79d4-gcjxf   1/1     Running   0          82s
 Configure Red Hat OpenShift Service Mesh to enable tracing, and define the distributed tracing data collection tracing providers in your meshConfig:
 
 ```sh
-$ oc apply -f 05-istio-update.yaml
+oc apply -f 05-istio-update.yaml
 ```

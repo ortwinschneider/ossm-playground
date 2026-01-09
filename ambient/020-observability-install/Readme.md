@@ -13,11 +13,11 @@ The two layers of ambient mesh generate different metrics:
 You can integrate Red Hat OpenShift Service Mesh with user-workload monitoring to enable observability in your service mesh. User-workload monitoring provides access to essential built-in tools and is required to run Kiali, the dedicated console for Istio.
 
 ```sh
-$ oc -n openshift-monitoring patch configmap cluster-monitoring-config -p '{"data":{"config.yaml":"enableUserWorkload: true"}}'
+oc -n openshift-monitoring patch configmap cluster-monitoring-config -p '{"data":{"config.yaml":"enableUserWorkload: true"}}'
 ```
 
 ```sh
-$ oc get pods -n openshift-user-workload-monitoring
+oc get pods -n openshift-user-workload-monitoring
 
 NAME                                   READY   STATUS    RESTARTS   AGE
 prometheus-operator-675f9d4b96-f9zxd   2/2     Running   0          8d
@@ -32,11 +32,11 @@ thanos-ruler-user-workload-1           4/4     Running   0          8d
 Change into the directory `020-observability-install`.
 
 ```sh
-$ oc apply -f 02_1-service-monitor.yaml
+oc apply -f 02_1-service-monitor.yaml
 ```
 
 ```sh
-$ oc apply -f 02_2-pod-monitors.yaml
+oc apply -f 02_2-pod-monitors.yaml
 ```
 
 PodMonitor objects must be applied in all mesh namespaces, including the Istio control plane namespace, because OpenShift Container Platform monitoring ignores the namespaceSelector spec in ServiceMonitor and PodMonitor objects.
@@ -48,7 +48,7 @@ PodMonitor objects must be applied in all mesh namespaces, including the Istio c
 To enable access logging for all gateways and waypoints in the mesh, create a Telemetry object in the `istio-system` namespace:
 
 ```sh
-$ oc apply -f 02_3-enable-access-logging.yaml
+oc apply -f 02_3-enable-access-logging.yaml
 ```
 
 ### 2.4 Install a Grafana deployment
@@ -58,13 +58,13 @@ Istio comes with Grafana dashboards which offer summaries of Istio’s metrics, 
 **Step 1**: Create a Cluster role binding for the grafana and kiali service accounts, so that they have access to OpenShift Monitoring:
 
 ```sh
-$ oc apply -f 03-monitoring-crb.yaml
+oc apply -f 03-monitoring-crb.yaml
 ```
 
 **Step 2**: Install Grafana:
 
 ```sh
-$ oc apply -f 04_1-grafana.yaml
+oc apply -f 04_1-grafana.yaml
 
 serviceaccount/grafana created
 configmap/grafana created
@@ -75,7 +75,7 @@ configmap/istio-services-grafana-dashboards created
 ```
 
 ```sh
-$ oc get pods -n istio-system
+oc get pods -n istio-system
 
 NAME                       READY   STATUS    RESTARTS   AGE
 grafana-6b6dfdf46c-zgr98   1/1     Running   0          37s
@@ -85,7 +85,7 @@ istiod-69b5fc4898-b7x4x    1/1     Running   0          55m
 **Step 3**: Create an OpenShift Route for Grafana:
 
 ```sh
-$ oc apply -f 04_2-grafana-route.yaml
+oc apply -f 04_2-grafana-route.yaml
 ```
 
 **Step 4**: Create a Service Account Token for the grafana serviceaccount:
