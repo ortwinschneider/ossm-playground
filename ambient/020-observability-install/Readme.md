@@ -99,7 +99,13 @@ oc apply -f 04_2-grafana-route.yaml
 **Step 4**: Create a Service Account Token for the grafana serviceaccount:
 
 ```sh
-oc create token grafana -n istio-system
+oc apply -f 04_3-grafana-token.yaml
+```
+
+Wait a few seconds, then extract the token:
+
+```sh
+oc get secret grafana-token -n istio-system -o jsonpath='{.data.token}' | base64 -d
 ```
 
 **Step 5**: Configure the Prometheus Datasource in Grafana:
