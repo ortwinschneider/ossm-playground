@@ -24,8 +24,8 @@ Log in to your OpenShift environment and install the following Operators from Op
 - Install the Kubernetes Gateway API: 
 
 ```sh
-$ oc get crd gateways.gateway.networking.k8s.io &> /dev/null || \
-  { oc apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/standard-install.yaml }
+oc get crd gateways.gateway.networking.k8s.io &> /dev/null || \
+  { oc apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/standard-install.yaml; }
 ```
 
 ## 1. Install OpenShift Service Mesh Ambient Mode

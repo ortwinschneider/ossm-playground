@@ -188,6 +188,19 @@ curl: (56) Recv failure: Connection reset by peer
 command terminated with exit code 56
 ```
 
+## When do I need Waypoint Proxies?
+
+You can add a waypoint proxy if workloads require any of the following L7 capabilities:
+
+**Traffic management:**
+- Advanced HTTP routing, load balancing, circuit breaking, rate limiting, fault injection, retries, and timeouts
+
+**Security**
+- Authorization policies based on L7 attributes such as request type or HTTP headers
+
+**Observability**
+- HTTP metrics, access logging, and tracing for application traffic
+
 ### 4.6 Create a Waypoint Proxy
 
  Istio is sending traffic from a gateway to the destination directly, even if that specific destination is enrolled in a waypoint.

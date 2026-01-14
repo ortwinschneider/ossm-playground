@@ -12,6 +12,14 @@ The two layers of ambient mesh generate different metrics:
 
 You can integrate Red Hat OpenShift Service Mesh with user-workload monitoring to enable observability in your service mesh. User-workload monitoring provides access to essential built-in tools and is required to run Kiali, the dedicated console for Istio.
 
+If the cluster-monitoring-config is not available, we create it with: 
+
+```sh
+oc apply -f 01-user-workload-monitoring.yaml
+```
+
+or if available
+
 ```sh
 oc -n openshift-monitoring patch configmap cluster-monitoring-config -p '{"data":{"config.yaml":"enableUserWorkload: true"}}'
 ```

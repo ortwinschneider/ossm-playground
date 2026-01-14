@@ -4,7 +4,25 @@ Istio ambient mode introduces a new way to manage service mesh without using tra
 
 Ambient mode uses a different data plane architecture that splits traffic processing between a per-node Layer 4 (L4) proxy called Ztunnel (Zero-Trust Tunnel) and an optional Layer 7 (L7) proxy called waypoint proxy.
 
-### Installing OpenShift Service Mesh Ambient Mode
+### 1.1 Configure OVN CNI
+
+Configure the OVN-Kubernetes Container Network Interface (CNI) to use local gateway mode by setting the routingViaHost field as true in the gatewayConfig specification for the Cluster Network Operator.
+
+```sh
+oc patch networks.operator.openshift.io cluster --type=merge -p '{
+  "spec": {
+    "defaultNetwork": {
+      "ovnKubernetesConfig": {
+        "gatewayConfig": {
+          "routingViaHost": true
+        }
+      }
+    }
+  }
+}'
+```
+
+### 1.2 Installing OpenShift Service Mesh Ambient Mode
 
 Navigate to the directory: `010-ambient-install`
 
@@ -26,7 +44,7 @@ Next install the dataplane by applying the `ZTunnel` resource:
 oc apply -f 03-istio-dataplane.yaml
 ```
 
-### Verify the installation
+### 1.3 Verify the installation
 
 ```sh
 oc get pods -n istio-system
