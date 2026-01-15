@@ -1,0 +1,19 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: travel-control-waypoint-route
+  namespace: travel-control
+spec:
+  parentRefs:
+  - group: ""
+    name: control
+    kind: Service
+    namespace: travel-control
+  rules:
+  - matches:
+    - path:
+        type: Exact
+        value: /status
+    backendRefs:
+    - name: control
+      port: 8080

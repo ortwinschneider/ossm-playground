@@ -80,7 +80,9 @@ Get the Travel Control Dashboard URL from the Route by running the following com
 echo "https://$(oc get routes -n travel-control route-travel-control -o jsonpath='{.spec.host}')"
 ```
 
-Open the Dashboard and verify everything is working.  
+Open the Dashboard and verify everything is working.
+
+**Please keep the browser window open so that you continuously send requests to the backend.**
 
 ![MinIO](../../ambient/images/travel-control-dashboard.png)
 
@@ -167,7 +169,7 @@ oc apply -f 03_1-auth-policy.yaml
 Check if the policy was attached to ztunnel:
 
 ```sh
-oc get ap travel-api-allow-portals -n travel-agency -o yaml
+oc get ap travel-api-portals-allow -n travel-agency -o yaml
 
 status:
   conditions:
@@ -203,11 +205,11 @@ You can add a waypoint proxy if workloads require any of the following L7 capabi
 
 ### 4.6 Create a Waypoint Proxy
 
- Istio is sending traffic from a gateway to the destination directly, even if that specific destination is enrolled in a waypoint.
+Istio is sending traffic from a gateway to the destination directly, even if that specific destination is enrolled in a waypoint.
 
 We can enable ingress waypoint routing on a service, such that traffic will be sent from the gateway to the configured waypoint, not to the destination service. 
 
-So, first create a Waypoint a Proxy and configure an example HTTPRoute.
+So, first create a Waypoint Proxy.
 
 ```sh
 oc apply -f 04_1-control-waypoint-create.yaml
@@ -238,7 +240,20 @@ The traffic entering the Ingress Gateway will now be forwarded to the Waypoint p
 oc apply -f 04_4-label-ingress-use-waypoint.yaml
 ```
 
-### 4.10 Expose the Ingress Gateway
+### 4.10 Create an Ingress Waypoint policy
+
+In this setup (External traffic -> Ingress Gateway -> Waypoint Proxy -> control service), it is recommended to
+
+- apply minimal routing logic at the Ingress Gateway and
+- apply all the other logic at the waypoint
+
+Deploy a routing policy that is enforced at the waypoint proxy:
+
+```sh
+oc apply -f 05_1-waypoint-routing.yaml
+```
+
+### 4.11 Expose the Ingress Gateway
 
 Expose the Ingress Gateway with an OpenShift Route:
 
@@ -252,7 +267,9 @@ You can now access the Travel Control Dashboard through the Service Mesh Ingress
 echo "https://$(oc get routes -n travel-control travel-gateway -o jsonpath='{.spec.host}')"
 ```
 
-### 4.11 Observe the Travel Demo application
+**Please keep the browser window open so that you continuously send requests to the backend.**
+
+### 4.12 Observe the Travel Demo application
 
 Go to Kiali or use the Service Mesh Console plugin to observe the traffic of the Travel Demo application. Navigate to **Service Mesh -> Traffic Graph**, select the 3 travel demo namespaces and have a look at the `Versioned app graph`
 
@@ -265,42 +282,6 @@ In the OpenShift Console, select the travel-agency project and navigate to **Wor
 In the OpenShift Console, go to Observe -> Metrics and run the query: `istio_tcp_connections_opened_total` to verify that ztunnel uses mTLS:
 
 ![OCP Deployments](../../ambient/images/ocp-ossm-metrics.png)
-
-### 4.12 Create a Level 7 Authorization policy
-
-The following policy is an Istio `AuthorizationPolicy` that defines which traffic is allowed to reach the workloads labeled `app: control` in the travel-control namespace.
-
-It basically creates a security rule that **ensures only traffic originating from the Istio Gateway deployment with the protocol HTTP can reach the control** application. 
-
-This is a Level 7 policy that is enforced by the waypoint proxy.
-
-```sh
-oc apply -f 06-gw-auth-policy.yaml
-```
-
-Check if the policy was attached to the waypoint proxy:
-
-```sh
-oc get ap travel-control-gateway-allow -n travel-control -o yaml
-
-status:
-  conditions:
-  - lastTransitionTime: "2026-01-09T12:39:43.199788478Z"
-    message: bound to travel-control/travel-control-waypoint
-    observedGeneration: "1"
-    reason: Accepted
-    status: "True"
-    type: WaypointAccepted
-```
-
-Verify that it is not possible to access the `control` service from another pod with the command:
-
-```sh
-oc exec $(oc get pod -l app=cars -n travel-agency -o jsonpath='{.items[0].metadata.name}') -n travel-agency -- curl -sS control.travel-control.svc.cluster.local:8080
-
-curl: (56) Recv failure: Connection reset by peer
-command terminated with exit code 56
-  ```
 
 ### 4.13 Enable Tracing for the Ingress Gateway and Waypoint Proxy
 

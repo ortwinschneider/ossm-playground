@@ -10,24 +10,4 @@ spec:
   listeners:
   - name: mesh
     port: 15008
-    protocol: HBONE
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: travel-control-waypoint-route
-  namespace: travel-control
-spec:
-  parentRefs:
-  - group: ""
-    name: control
-    kind: Service
-    namespace: travel-control
-  rules:
-  - matches:
-    - path:
-        type: PathPrefix
-        value: /
-    backendRefs:
-    - name: control
-      port: 8080    
+    protocol: HBONE             
