@@ -8,7 +8,8 @@ Istio’s ambient mode is ideal for new mesh deployments. But it can be combined
 
 ### 5.0 About this module
 
-In this module we are going to combine our existing ...
+In this module we are going to create a second ingress namespace with the control service inside.
+But the control service uses a sidecar as dataplane and is communicating with the travel portals, which are running in ambient mode.
 
 ### 5.1 Create the namespace
 
@@ -74,12 +75,14 @@ control istio-proxy
 oc apply -f 04-travel-control-route.yaml
 ```
 
-Get the Travel Control Dashboard URL from the Route by running the following command:
+**Step 3**: Get the Travel Control Dashboard URL from the Route by running the following command:
 
 ```sh
 echo "https://$(oc get routes -n travel-control-sidecar control-sidecar -o jsonpath='{.spec.host}')"
 ```
 
 Open the Dashboard and verify it is working.
+
+**Step 4**: Also go to Kiali, select the additional `travel-control-sidecar` namespace and watch the `Traffic Graph`:
 
 ![Sidecar Control](../../ambient/images/travel-control-sidecar.png)
