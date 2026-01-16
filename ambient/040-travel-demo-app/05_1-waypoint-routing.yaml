@@ -12,8 +12,8 @@ spec:
   rules:
   - matches:
     - path:
-        type: Exact
-        value: /status
+        type: PathPrefix
+        value: /
     backendRefs:
     - name: control
       port: 8080
