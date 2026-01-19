@@ -1,0 +1,9 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: travel-portal-deny-all-l4
+  namespace: travel-portal
+spec:
+  action: DENY
+  rules:
+  - {}

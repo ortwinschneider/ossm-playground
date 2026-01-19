@@ -1,4 +1,4 @@
-# OpenShift Service Mesh Ambient Mode - The Demo
+# OpenShift Service Mesh Ambient Mode - Workshop / Lab
 
 Explore OpenShift Service Mesh - Ambient Mode, based on Istio service mesh without sidecars.
 
@@ -98,3 +98,19 @@ Istio and OpenShift Service Mesh provides powerful built-in features to implemen
 * **Outlier detection**: Automatically eject misbehaving service instances
 
 Navigate to the directory: [070-resilience](./ambient/070-resilience/Readme.md) and follow the instructions.
+
+## 8. Authentication and Authorization
+
+Istio provides strong, built-in security capabilities at the service mesh level:
+
+* **mTLS (Mutual TLS)**: Automatically encrypts traffic and authenticates workloads using identities
+* **Workload identity**: Each service gets a cryptographic identity based on its service account
+* **Peer authentication**: Control how services authenticate each other (strict, permissive, disabled)
+* **Request authentication**: Validate JWT tokens for end-user or external identity providers
+* **Authorization policies**: Fine-grained access control based on identity, namespace, paths, methods, headers, and claims
+* **Default deny policies**: Implement zero-trust by blocking all traffic unless explicitly allowed
+* **Centralized enforcement**: Security rules are enforced consistently without changing application code
+
+With Istio, authentication and authorization become infrastructure concerns rather than application concerns. This module will show how to secure service-to-service communication and APIs in a uniform, declarative, and production-ready way.
+
+Navigate to the directory: [080-authorization](./ambient/080-authorization/Readme.md) and follow the instructions.

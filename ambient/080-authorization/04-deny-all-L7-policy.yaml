@@ -1,0 +1,13 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: travel-portal-deny-all
+  namespace: travel-portal
+spec:
+  targetRefs:
+  - kind: Gateway
+    group: gateway.networking.k8s.io
+    name: waypoint-travel-portal
+  action: DENY
+  rules:
+  - {}

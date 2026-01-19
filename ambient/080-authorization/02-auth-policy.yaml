@@ -1,0 +1,16 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: travel-api-control-allow
+  namespace: travel-portal
+spec:
+  selector:
+    matchLabels:
+      app: viaggi
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/travel-control/sa/default  
+ 

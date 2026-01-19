@@ -1,0 +1,19 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-get-from-travel-portals
+  namespace: travel-agency
+spec:
+  targetRefs:
+  - kind: Service
+    group: ""
+    name: travels
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/travel-portal/sa/default
+    to:
+    - operation:
+        methods: ["GET"]  
