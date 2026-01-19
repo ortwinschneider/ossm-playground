@@ -85,3 +85,16 @@ The key to traffic management in Ambient Mode is understanding when traffic is h
 - **Waypoint Proxy**: Handles L7 (HTTP/gRPC) traffic management. This is where the advanced, application-aware features are enabled.
 
 Navigate to the directory: [060-traffic-management](./ambient/060-traffic-management/Readme.md) and follow the instructions.
+
+## 7. Implementing Resilience
+
+Istio and OpenShift Service Mesh provides powerful built-in features to implement resilience at the service mesh level, without changing application code. Key features include:
+
+* **Retries**: Automatically retry failed requests based on policies
+* **Timeouts**: Prevent requests from hanging indefinitely
+* **Circuit breakers**: Stop sending traffic to unhealthy services to avoid overload
+* **Fault injection**: Simulate failures and latency to test resilience
+* **Load balancing strategies**: Distribute traffic intelligently across instances
+* **Outlier detection**: Automatically eject misbehaving service instances
+
+Navigate to the directory: [070-resilience](./ambient/070-resilience/Readme.md) and follow the instructions.

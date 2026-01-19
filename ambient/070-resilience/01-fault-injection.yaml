@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: cars-inject-delay
+  namespace: travel-agency
+spec:
+  hosts:
+  - cars
+  http:
+  - fault:
+      delay:
+        fixedDelay: 10s
+        percentage:
+          value: 100.0     
+    route:
+    - destination:
+        host: cars

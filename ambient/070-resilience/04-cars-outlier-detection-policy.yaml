@@ -1,0 +1,12 @@
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: cars-outlier-detection-policy
+  namespace: travel-agency
+spec:
+  host: cars
+  trafficPolicy:
+    outlierDetection:
+      consecutive5xxErrors: 2
+      baseEjectionTime: 15s
+      maxEjectionPercent: 100

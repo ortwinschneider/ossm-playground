@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: cars-low-threshold-policy
+  namespace: travel-agency
+spec:
+  host: cars
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 1
+      http:
+        http1MaxPendingRequests: 1
+        maxRequestsPerConnection: 1
