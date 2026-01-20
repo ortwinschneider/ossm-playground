@@ -28,7 +28,9 @@ oc apply -f 01_2-pod-monitors-create.yaml
 
 ```sh
 oc apply -n travel-agency -f 02_1-travel-agency-app.yaml
+```
 
+```
 secret/mysql-credentials created
 service/mysqldb created
 deployment.apps/mysqldb-v1 created
@@ -50,7 +52,9 @@ service/travels created
 
 ```sh
 oc apply -n travel-portal -f 02_2-travel-portal-app.yaml
+```
 
+```
 deployment.apps/voyages created
 service/voyages created
 deployment.apps/viaggi created
@@ -63,7 +67,9 @@ service/travels created
 
 ```sh
 oc apply -n travel-control -f 02_3-travel-control-app.yaml
+```
 
+```
 deployment.apps/control created
 service/control created
 ```
@@ -96,7 +102,9 @@ We can verify this by the following command:
 
 ```sh
 istioctl ztunnel-config workload -n ztunnel
+```
 
+```
 NAMESPACE      POD NAME                        ADDRESS      NODE     WAYPOINT PROTOCOL
 travel-agency  cars-v1-75f98c6f58-6g8nv        10.130.1.114 master-0 None     TCP
 travel-agency  discounts-v1-6dccdff9ff-dwflq   10.130.1.116 master-0 None     TCP
@@ -132,7 +140,9 @@ Verify that the application is now part of the Mesh:
 
 ```sh
 istioctl ztunnel-config workload -n ztunnel
+```
 
+```
 NAMESPACE      POD NAME                        ADDRESS      NODE     WAYPOINT PROTOCOL
 travel-agency  cars-v1-75f98c6f58-6g8nv        10.130.1.114 master-0 None     HBONE
 travel-agency  discounts-v1-6dccdff9ff-dwflq   10.130.1.116 master-0 None     HBONE
