@@ -34,11 +34,57 @@ oc apply -f 01-ns-create.yaml
 
 Now install the controlplane by applying the `Istio`, `IstioCNI` resource with profile ambient. We also use discovery selectors to scope the mesh:
 
+```yaml
+apiVersion: sailoperator.io/v1
+kind: Istio
+metadata:
+  name: default
+spec:
+  namespace: istio-system
+  version: v1.27-latest
+  values:
+    pilot:
+      trustedZtunnelNamespace: ztunnel
+    profile: ambient
+    meshConfig:
+      discoverySelectors:
+      - matchLabels:
+          istio-discovery: enabled
+```
+
+and 
+
+```yaml
+apiVersion: sailoperator.io/v1
+kind: IstioCNI
+metadata:
+  name: default
+spec:
+  version: v1.27-latest
+  namespace: istio-cni
+  profile: ambient
+```
+
 ```sh
 oc apply -f 02-istio-control-plane.yaml
 ```
 
 Next install the dataplane by applying the `ZTunnel` resource:
+
+```yaml
+apiVersion: sailoperator.io/v1
+kind: ZTunnel
+metadata:
+  name: default
+spec:
+  namespace: ztunnel
+  values:
+    ztunnel:
+      logLevel: info
+      terminationGracePeriodSeconds: 30
+  version: v1.27-latest
+  profile: ambient
+```
 
 ```sh
 oc apply -f 03-istio-dataplane.yaml
@@ -48,21 +94,27 @@ oc apply -f 03-istio-dataplane.yaml
 
 ```sh
 oc get pods -n istio-system
+```
 
+```
 NAME                      READY   STATUS    RESTARTS   AGE
 istiod-69b5fc4898-b7x4x   1/1     Running   0          82s
 ```
 
 ```sh
 oc get daemonset -n istio-cni
+```
 
+```
 NAME             DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
 istio-cni-node   3         3         3       3            3           kubernetes.io/os=linux   110s
 ```
 
 ```sh
 oc get daemonset -n ztunnel
+```
 
+```sh
 NAME      DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
 ztunnel   3         3         3       3            3           kubernetes.io/os=linux   2m24s
 ```
