@@ -32,7 +32,9 @@ Change into the directory `030-tracing-install`.
 
 ```sh
 oc apply -f ./00-minio/
+```
 
+```
 namespace/minio created
 secret/minio-secret created
 persistentvolumeclaim/minio-pvc created
@@ -69,6 +71,33 @@ oc apply -f 02-minio-secret.yaml
 
 This CR creates a simple TempoStack deployment, that exposes the Jaeger UI, which visualizes the data, via a route and uses our MinIO instance for storage of tracing data.
 
+```yaml
+apiVersion: tempo.grafana.com/v1alpha1
+kind: TempoStack 
+metadata:
+  name: simplest
+  namespace: tempostack 
+spec: 
+  storage: 
+    secret: 
+      name: minio-traces-secret 
+      type: s3 
+  storageSize: 1Gi 
+  resources: 
+    total:
+      limits:
+        memory: 2Gi
+        cpu: 2000m
+  template:
+    queryFrontend:
+      jaegerQuery:
+        enabled: true 
+        ingress:
+          route:
+            termination: edge
+          type: route
+```
+
 ```sh
 oc apply -f 03-tempostack.yaml
 ```
@@ -83,7 +112,9 @@ Verify that all the TempoStack component pods are running by running the followi
 
 ```sh
 oc get pods -n tempostack
+```
 
+```
 NAME                                             READY   STATUS    RESTARTS   AGE
 tempo-simplest-compactor-6bb589bdf5-5dxv6        1/1     Running   0          4m19s
 tempo-simplest-distributor-7c7bcc457c-cctr7      1/1     Running   0          4m20s
@@ -105,13 +136,45 @@ Follow the URL to open the Jeager Dashboard in your web browser.
 Next, install the `OpenTelemetryCollector` resource in the istio-system namespace.
 This collector will receive traces from Istio and will export them through GRPC to Tempo.
 
+```yaml
+kind: OpenTelemetryCollector
+apiVersion: opentelemetry.io/v1beta1
+metadata:
+  name: otel
+  namespace: istio-system
+spec:
+  observability:
+    metrics: {}
+  deploymentUpdateStrategy: {}
+  config:
+    exporters:
+      otlp:
+        endpoint: 'tempo-simplest-distributor.tempostack.svc.cluster.local:4317'
+        tls:
+          insecure: true
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: '0.0.0.0:4317'
+    service:
+      pipelines:
+        traces:
+          exporters:
+            - otlp
+          receivers:
+            - otlp
+```
+
 ```sh
 oc apply -f 04-otel-collector.yaml
 ```
 
 ```sh
 oc get pods -n istio-system
+```
 
+```
 NAME                              READY   STATUS    RESTARTS   AGE
 grafana-6b6dfdf46c-zgr98          1/1     Running   0          19h
 istiod-69b5fc4898-b7x4x           1/1     Running   0          19h
@@ -123,6 +186,31 @@ otel-collector-59798f79d4-gcjxf   1/1     Running   0          82s
 ### 3.6 Configure Tracing in Service Mesh
 
 Configure Red Hat OpenShift Service Mesh to enable tracing, and define the distributed tracing data collection tracing providers in your meshConfig:
+
+```yaml
+apiVersion: sailoperator.io/v1
+kind: Istio
+metadata:
+  name: default
+  namespace: istio-system
+spec:
+  namespace: istio-system
+  version: v1.27-latest
+  values:
+    pilot:
+      trustedZtunnelNamespace: ztunnel
+    profile: ambient
+    meshConfig:
+      enableTracing: true
+      extensionProviders:
+      - name: otel
+        opentelemetry:
+          port: 4317
+          service: otel-collector.istio-system.svc.cluster.local
+      discoverySelectors:
+      - matchLabels:
+          istio-discovery: enabled
+```
 
 ```sh
 oc apply -f 05-istio-update.yaml
