@@ -20,12 +20,27 @@ Log in to your OpenShift environment and install the following Operators from Op
 - Red Hat OpenShift Service Mesh 3
 - Tempo Operator (provided by Red Hat)
 - Red Hat build of OpenTelemetry (provided by Red Hat)
-  
-- Install the Kubernetes Gateway API: 
+
+
+Install the Kubernetes Gateway API, if not available: 
 
 ```sh
 oc get crd gateways.gateway.networking.k8s.io &> /dev/null || \
   { oc apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/standard-install.yaml; }
+```
+
+Install `istioctl` cmd, if not available:
+  
+```sh
+curl -sL https://developers.redhat.com/content-gateway/file/pub/cgw/servicemesh/1.27.3/istioctl-1.27.3-linux-amd64.tar.gz -O .
+```
+
+```sh
+tar xzf istioctl-1.27.3-linux-amd64.tar.gz
+```
+
+```sh
+sudo cp istioctl-linux-amd64/istioctl /usr/local/bin
 ```
 
 ## 1. Install OpenShift Service Mesh Ambient Mode
