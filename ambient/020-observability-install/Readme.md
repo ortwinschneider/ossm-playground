@@ -14,11 +14,22 @@ You can integrate Red Hat OpenShift Service Mesh with user-workload monitoring t
 
 If the cluster-monitoring-config is not available, we create it with: 
 
+```yaml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: cluster-monitoring-config
+  namespace: openshift-monitoring
+data:
+  config.yaml: |
+    enableUserWorkload: true 
+```
+
 ```sh
 oc apply -f 01-user-workload-monitoring.yaml
 ```
 
-or if available
+or if available, make sure `enableUserWorkload` is true:
 
 ```sh
 oc -n openshift-monitoring patch configmap cluster-monitoring-config -p '{"data":{"config.yaml":"enableUserWorkload: true"}}'
@@ -26,7 +37,9 @@ oc -n openshift-monitoring patch configmap cluster-monitoring-config -p '{"data"
 
 ```sh
 oc get pods -n openshift-user-workload-monitoring
+```
 
+```
 NAME                                   READY   STATUS    RESTARTS   AGE
 prometheus-operator-675f9d4b96-f9zxd   2/2     Running   0          8d
 prometheus-user-workload-0             6/6     Running   0          8d
@@ -39,6 +52,8 @@ thanos-ruler-user-workload-1           4/4     Running   0          8d
 
 Change into the directory `020-observability-install`.
 
+PodMonitor objects must be applied in all mesh namespaces, including the Istio control plane namespace, because OpenShift Container Platform monitoring ignores the namespaceSelector spec in ServiceMonitor and PodMonitor objects.
+
 ```sh
 oc apply -f 02_1-service-monitor.yaml
 ```
@@ -46,8 +61,6 @@ oc apply -f 02_1-service-monitor.yaml
 ```sh
 oc apply -f 02_2-pod-monitors.yaml
 ```
-
-PodMonitor objects must be applied in all mesh namespaces, including the Istio control plane namespace, because OpenShift Container Platform monitoring ignores the namespaceSelector spec in ServiceMonitor and PodMonitor objects.
 
 ### 2.3 Enable Access Logging
 
@@ -73,7 +86,9 @@ oc apply -f 03-monitoring-crb.yaml
 
 ```sh
 oc apply -f 04_1-grafana.yaml
+```
 
+```
 serviceaccount/grafana created
 configmap/grafana created
 service/grafana created
@@ -84,7 +99,9 @@ configmap/istio-services-grafana-dashboards created
 
 ```sh
 oc get pods -n istio-system
+```
 
+```
 NAME                       READY   STATUS    RESTARTS   AGE
 grafana-6b6dfdf46c-zgr98   1/1     Running   0          37s
 istiod-69b5fc4898-b7x4x    1/1     Running   0          55m
@@ -144,6 +161,39 @@ Kiali provides dashboards, observability, and robust configuration and validatio
 When running in Istio ambient mode, Kiali introduces new behaviors and visualizations to support the Ambient data plane. [Here](https://docs.redhat.com/en/documentation/red_hat_openshift_service_mesh/3.2/html/observability/kiali-operator-provided-by-red-hat#ossm-kiali-about_ossm-kiali) you find further information.
 
 Now install the Kiali Custom Resource:
+
+```yaml
+apiVersion: kiali.io/v1alpha1
+kind: Kiali
+annotations:
+  ansible.sdk.operatorframework.io/reconcile-period: 60s
+metadata:
+  name: kiali-user-workload-monitoring
+  namespace: istio-system
+spec:
+  deployment:
+    cluster_wide_access: true
+    discovery_selectors:
+      default:
+      - matchExpressions:
+        - key: istio-discovery
+          operator: In
+          values:
+          - enabled
+    logger:
+      log_level: info
+  external_services:
+    grafana:
+      enabled: true
+      internal_url: 'http://grafana.istio-system:3000'
+    prometheus:
+      auth:
+        type: bearer
+        use_kiali_token: true
+      thanos_proxy:
+        enabled: true
+      url: https://thanos-querier.openshift-monitoring.svc.cluster.local:9091
+```
 
 ```sh
 oc apply -f 05-kiali.yaml
