@@ -2,6 +2,10 @@
 
 Explore OpenShift Service Mesh - Ambient Mode, based on Istio service mesh without sidecars.
 
+## Workshop Instructions
+
+You'll find the instructions for this workshop here: [https://ortwinschneider.github.io/ossm-ambient-mode/modules/index.html](https://ortwinschneider.github.io/ossm-ambient-mode/modules/index.html)
+
 ## About Ambient Mode
 
 Istio ambient mode introduces a new way to manage service mesh without using traditional sidecar proxies. The biggest change is how it separates network traffic processing into two distinct layers, which is the core architectural difference. This architecture simplifies networking, reduces resource usage, and improves security while supporting the same service mesh use cases.
