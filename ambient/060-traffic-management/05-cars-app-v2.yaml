@@ -1,0 +1,73 @@
+##################################################################################################
+# Cars services
+##################################################################################################
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: cars-v2
+  namespace: travel-agency
+spec:
+  selector:
+    matchLabels:
+      app: cars
+      version: v2
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        readiness.status.sidecar.istio.io/applicationPorts: ""
+        proxy.istio.io/config: |
+          tracing:
+            zipkin:
+              address: zipkin.istio-system:9411
+            sampling: 10
+            custom_tags:
+              http.header.portal:
+                header:
+                  name: portal
+              http.header.device:
+                header:
+                  name: device
+              http.header.user:
+                header:
+                  name: user
+              http.header.travel:
+                header:
+                  name: travel
+      labels:
+        app: cars
+        version: v2
+    spec:
+      containers:
+        - name: cars
+          image: quay.io/kiali/demo_travels_cars:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+          env:
+            - name: CURRENT_SERVICE
+              value: "cars"
+            - name: CURRENT_VERSION
+              value: "v2"
+            - name: LISTEN_ADDRESS
+              value: ":8000"
+            - name: DISCOUNTS_SERVICE
+              value: "http://discounts.travel-agency:8000"
+            - name: MYSQL_SERVICE
+              value: "mysqldb.travel-agency:3306"
+            - name: MYSQL_USER
+              value: "root"
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-credentials
+                  key: rootpasswd
+            - name: MYSQL_DATABASE
+              value: "test"

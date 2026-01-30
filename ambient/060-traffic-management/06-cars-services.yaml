@@ -1,25 +1,31 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: voyages-v1
-  namespace: travel-portal
+  name: cars-v1
+  namespace: travel-agency
+  labels:
+    app: cars
+    version: v1
 spec:
   ports:
     - name: http
       port: 8000
   selector:
-    app: voyages
+    app: cars
     version: v1
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: voyages-v2
-  namespace: travel-portal
+  name: cars-v2
+  namespace: travel-agency
+  labels:
+    app: cars
+    version: v2
 spec:
   ports:
     - name: http
       port: 8000
   selector:
-    app: voyages
+    app: cars
     version: v2

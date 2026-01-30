@@ -1,6 +1,6 @@
-# OpenShift Service Mesh Ambient Mode - Workshop / Lab
+# OpenShift Service Mesh 3 - Ambient Mode Workshop
 
-Explore OpenShift Service Mesh - Ambient Mode, based on Istio service mesh without sidecars.
+Explore OpenShift Service Mesh 3 - Ambient Mode, based on Istio service mesh without sidecars.
 
 ## Workshop Instructions
 
